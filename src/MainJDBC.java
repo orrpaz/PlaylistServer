@@ -5,9 +5,10 @@ public class MainJDBC {
 
 	public static void main(String[] args) {
 		JDBCExample jdbcExample;
-		TCPServer server = new TCPServer(6789);
+
+		TCPServer server = new TCPServer(6788);
 		// creating the example object
-		jdbcExample = new JDBCExample();
+		jdbcExample = new JDBCExample(server);
 
 		// connecting
 		if (!jdbcExample.openConnection())

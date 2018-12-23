@@ -5,12 +5,14 @@ import java.sql.*;
  */
 public class JDBCExample {
 	Connection conn; // DB connection
+	TCPServer server;
 
 	/**
 	 * Empty constructor
 	 */
-	public JDBCExample() {
+	public JDBCExample(TCPServer server) {
 		this.conn = null;
+		this.server = server;
 	}
 
 	/**
@@ -61,18 +63,26 @@ public class JDBCExample {
 	 */
 	public void read10SongFromDB() {
 
-		try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT title FROM song\n" +
-                "ORDER BY RAND()\n" +
-                "LIMIT 10");) {
-
+		try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT s.title as \"title\" ,a.name as \"name\" FROM song s, artist a\n" +
+				"WHERE a.\uFEFFid = s.artist_id\n" +
+				"ORDER BY RAND()\n" +
+				"LIMIT 10\n");) {
+			String msg="";
 			while (rs.next() == true) {
-				System.out.print(rs.getString("title"));
-				System.out.print("\n");
+				msg += rs.getString("title") + "\t" + rs.getString("name") + "\n";
+
+//				System.out.print(rs.getString("title"));
+//				System.out.print("\t");
+//				System.out.print(rs.getString("name"));
+//				System.out.print("\n");
 //				System.out.print(rs.getString("COUNTRY"));
 //				System.out.print("\t");
 //				System.out.print(rs.getString(3));
 //				System.out.println();
+
 			}
+			server.sendToSocket(msg);
+
 		} catch (SQLException e) {
 			System.out.println("ERROR executeQuery - " + e.getMessage());
 		}
